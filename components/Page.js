@@ -13,16 +13,14 @@ import { Dimensions, View } from 'react-native';
 const SCREEN_WIDTH = Dimensions.get('screen').width
 //---------------------------------------------------------
 export default function Page({ children, verticalAlign }) {
-    const page = {
-        backgroundColor: 'tomato',
-        height: '100%',
-        width: SCREEN_WIDTH,
-        alignItems: 'center',
-        justifyContent: verticalAlign,
-
-    }
     return (
-        <View style={page}>
+        <View style={{
+            backgroundColor: 'tomato',
+            height: '100%',
+            width: SCREEN_WIDTH,
+            alignItems: 'center',
+            justifyContent: verticalAlign,
+        }}>
             {children}
         </View >
     )

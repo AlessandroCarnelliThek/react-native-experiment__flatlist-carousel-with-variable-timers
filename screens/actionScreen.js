@@ -36,9 +36,10 @@ export const ActionScreen = ({ navigation, route }) => {
 
     const [flatListRef, setFlatListRef] = useState(0)
 
-
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //----------------------------------------
     const renderItem = ({ item }) => {
+
         const stylesItem = {
             item: {
                 backgroundColor: '#ddd'
@@ -76,29 +77,35 @@ export const ActionScreen = ({ navigation, route }) => {
             </View>
         )
     }
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //----------------------------------------
     const goToPrevItem = () => {
         if (index != 0) {
+
             setIndex(index => index - 1)
+            console.log('::::BACK')
         }
     }
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //----------------------------------------
     const goToNextItem = () => {
         if (index != DATA_LENGTH - 1) {
+
             setIndex(index => index + 1)
+            console.log('::::NEXT')
         }
     }
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //----------------------------------------
     const getItemLayout = (data, index) => (
         { length: SCREEN_WIDTH, offset: SCREEN_WIDTH * index, index }
     )
+    //----------------------------------------
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //----------------------------------------
     useEffect(() => { // START
 
         setIsStart(true)
         console.log('::::START')
     }, [])
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //----------------------------------------
     useEffect(() => { // SCROLL
         if (isStart) {
 
@@ -107,8 +114,8 @@ export const ActionScreen = ({ navigation, route }) => {
             console.log('::::SCROLL')
         }
     }, [index])
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    useEffect(() => { // COUNTER
+    //----------------------------------------
+    useEffect(() => { // COUNTER UPDATE
 
         console.log('::::COUNTER: ' + counter)
         let interval = setInterval(() => {
@@ -135,13 +142,18 @@ export const ActionScreen = ({ navigation, route }) => {
         return () => clearInterval(interval)
 
     }, [counter])
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //----------------------------------------
     useEffect(() => { // FINISH
-        console.log('::::FINISH')
+        if (isFinish) {
+
+            console.log('::::FINISH')
+        }
     }, [isFinish])
+    //----------------------------------------
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     return (
         <Page >
+
 
             <FlatList
                 data={DATA}
@@ -149,6 +161,7 @@ export const ActionScreen = ({ navigation, route }) => {
                 keyExtractor={(item) => item.id}
 
                 horizontal={true}
+                scrollEnabled={false}
                 pagingEnabled={true}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
@@ -182,16 +195,17 @@ export const ActionScreen = ({ navigation, route }) => {
             </Pressable>
 
 
-
             {
                 isFinish
 
                     ? <View style={[
                         styles.isFinish,
                         styles.CENTER,
-                        styles.FULLSCREEN
+                        styles.FULLSCREEN,
                     ]}>
+
                         <Text style={styles.title}>END</Text>
+
                         <Pressable
                             onPress={() => navigation.navigate('Home')}
                             style={styles.isFinish_homeBtn}>
@@ -202,8 +216,9 @@ export const ActionScreen = ({ navigation, route }) => {
                     : <></>
             }
 
+
         </Page >
-    );
+    )
 }
 
 const styles = StyleSheet.create({
