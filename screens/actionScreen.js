@@ -28,11 +28,11 @@ export const ActionScreen = ({ navigation, route }) => {
     const DATA = route.params
     const DATA_LENGTH = DATA.length
 
-    const [index, setIndex] = useState(0)
-    const [isStart, setIsStart] = useState(true)
+    const [isStart, setIsStart] = useState(false)
     const [isFinish, setIsFinish] = useState(false)
+
+    const [index, setIndex] = useState(0)
     const [counter, setCounter] = useState(DATA[index].duration)
-    const [initialCounter, setInitialCounter] = useState(3)
 
     const [flatListRef, setFlatListRef] = useState(0)
 
@@ -80,14 +80,12 @@ export const ActionScreen = ({ navigation, route }) => {
     const goToPrevItem = () => {
         if (index != 0) {
             setIndex(index => index - 1)
-            setInitialCounter(3)
         }
     }
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     const goToNextItem = () => {
         if (index != DATA_LENGTH - 1) {
             setIndex(index => index + 1)
-            setInitialCounter(3)
         }
     }
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -95,48 +93,52 @@ export const ActionScreen = ({ navigation, route }) => {
         { length: SCREEN_WIDTH, offset: SCREEN_WIDTH * index, index }
     )
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    useEffect(() => {
+    useEffect(() => { // START
+
+        setIsStart(true)
+        console.log('::::START')
+    }, [])
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    useEffect(() => { // SCROLL
         if (isStart) {
-
-            const interval = setInterval(() => {
-                setInitialCounter(initialCounter => initialCounter - 1)
-            }, 1000)
-
-            if (initialCounter == -1) {
-                setIsStart(false)
-            }
-
-            return () => clearInterval(interval)
-        }
-    }, [isStart, initialCounter])
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    useEffect(() => {
-        if (!isStart && index < DATA_LENGTH && counter >= -1) {
-
-            const interval = setInterval(() => {
-                setCounter(counter => counter - 1)
-            }, 1000)
-
-            if (counter == -1 && index < DATA_LENGTH - 1) {
-                goToNextItem()
-            }
-
-            if (counter == -1 && index == DATA_LENGTH - 1) {
-                setIsFinish(true)
-            }
-
-            return () => clearInterval(interval)
-        }
-    }, [isStart, counter])
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    useEffect(() => {
-        if (!isStart) {
 
             flatListRef.scrollToIndex({ animated: true, index: index })
             setCounter(DATA[index].duration)
-            setIsStart(true)
+            console.log('::::SCROLL')
         }
     }, [index])
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    useEffect(() => { // COUNTER
+
+        console.log('::::COUNTER: ' + counter)
+        let interval = setInterval(() => {
+
+            if (counter == 0 && index < (DATA_LENGTH - 1)) {
+
+                setIndex(index => index + 1)
+                return () => clearInterval(interval)
+            }
+
+            if (counter >= 0 && index < DATA_LENGTH && !(counter == 0 && index == (DATA_LENGTH - 1))) {
+
+                setCounter(counter => counter - 1)
+                return () => clearInterval(interval)
+            }
+
+            if (!isFinish && counter == 0 && index == (DATA_LENGTH - 1)) {
+
+                setIsFinish(true)
+                return () => clearInterval(interval)
+            }
+
+        }, 1000)
+        return () => clearInterval(interval)
+
+    }, [counter])
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    useEffect(() => { // FINISH
+        console.log('::::FINISH')
+    }, [isFinish])
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     return (
         <Page >
@@ -180,20 +182,6 @@ export const ActionScreen = ({ navigation, route }) => {
             </Pressable>
 
 
-            {
-                isStart
-
-                    ? <View style={[
-                        styles.isStart,
-                        styles.CENTER,
-                        styles.FULLSCREEN
-                    ]}>
-
-                        <Text style={styles.title}>{initialCounter}</Text>
-                    </View>
-
-                    : <></>
-            }
 
             {
                 isFinish
